@@ -1,0 +1,22 @@
+---
+- name: Create users in the host node
+  hosts: Node01
+  become: true
+  tasks:
+    - name: delete users in differen hosts
+      user:
+        name: ansible
+        state: absent
+        regiser: users_output
+    - name: Send notifications
+      mail:
+        host: smtp.gmail.com
+        port: 587
+        username: anishknsk@gmail.com
+        password: mesa radm tcpd ccfg
+        to: anishshunmugam@gmail.com
+        subject: TestMail
+        body: "file contains the details of the user status"
+        from: anishknsk@gmail.com
+      delegate_to: localhost
+

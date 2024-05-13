@@ -1,0 +1,17 @@
+---
+- name: Create Users on Different Servers
+  hosts: demo
+  become: yes
+  tasks:
+    - name: Create user1 on Server1
+      user:
+        name: user1
+        state: present
+      when: inventory_hostname == "Node01"
+
+    - name: Create user2 on Server2
+      user:
+        name: user2
+        state: present
+      when: inventory_hostname == "Node02"
+

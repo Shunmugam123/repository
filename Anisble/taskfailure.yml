@@ -1,0 +1,24 @@
+---
+- name: Playbook with Error Handling and Email Notification
+  hosts: localhost
+  gather_facts: no
+  tasks:
+    - name: Execute tasks with error handling
+      block:
+        - name: Task that may fail
+          user:
+            name: ansible
+            state: present
+            register: task_result
+
+      rescue:
+         - name: Send email with report
+           mail:
+             host: smtp.gmail.com
+             port: 587
+             username: anishknsk@gmail.com
+             password: mesa radm tcpd ccfg
+             to: anishshunmugam@gmail.com
+             subject: "Ansible Notification: Task Failed"
+             body: "The following task failed:\n"
+

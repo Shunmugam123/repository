@@ -1,0 +1,35 @@
+---
+- hosts: demo
+  become: true
+  become_user: root
+  tasks:
+    - name: Update RHEL/CentOS
+      package:
+        name: "*" 
+        state: latest
+      async: 5000
+      poll: 0 
+      vars:
+        use_backend: yum
+      when: ansible_os_family == "RedHat"
+
+    - name: Update Ubuntu
+      package:
+        upgrade: yes
+        update_cache: yes
+      async: 3000
+      poll: 0
+      vars:
+        use_backend: apt
+      when: ansible_os_family == "Debian"
+
+    - name: Update SUSE
+      package:
+        name: '*'
+        state: latest
+      async: 5000
+      poll: 0
+      vars:
+        use_backend: community.general.zypper
+      when: ansible_os_family == "Suse"
+    

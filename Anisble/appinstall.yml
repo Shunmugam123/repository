@@ -1,0 +1,26 @@
+---
+- name: Installing Apache, Start the service and open ports for firewall
+  hosts: Node01 
+  become: true
+  tasks:
+    - name: Install apche package
+      yum:
+        name: httpd
+        state: latest
+    - name: Start the apache service
+      service:
+        name: httpd 
+        state: started
+    - name: Open port to firewalld access
+      firewalld:
+        service: http
+        permanent: true
+        state: enabled
+        register: firewalld
+    - name: Show result
+      debug:
+       msg: content of {{ firewalld }}
+    - name: Restart the service
+      service:
+        name: firewalld
+        state: reloaded

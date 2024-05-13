@@ -1,0 +1,29 @@
+---
+- name: Linux OS patching
+  hosts: demo
+  become: true
+  tasks:
+    - name: Update RHEL/CentOS
+      package:
+        name: "*" 
+        state: latest
+      vars:
+        use_backend: yum
+      when: ansible_os_family == "RedHat"
+
+    - name: Update Ubuntu
+      package:
+        upgrade: yes
+        update_cache: yes
+      vars:
+        use_backend: apt
+      when: ansible_os_family == "Debian"
+
+    - name: Update SUSE
+      package:
+        name: '*'
+        state: latest
+      vars:
+        use_backend: community.general.zypper
+      when: ansible_os_family == "Suse"
+    

@@ -1,0 +1,34 @@
+---
+- name: Playbook with Error Handling and Email Notification
+  hosts: localhost
+  gather_facts: no
+  tasks:
+    - name: Execute tasks with error handling
+      block:
+        - name: start of the task
+          debug:
+            msg: Task is started
+        - name: User deletion
+          user:
+            name: ansible
+            state: present
+            register: task_result
+        - name: End of task
+          debug:
+            msg: Echo "End of task"
+
+      rescue:
+        - name: Inside rescue block
+          debug:
+            msg: failed
+        - name: Send email with report
+          mail:
+             host: smtp.gmail.com
+             port: 587
+             username: anishknsk@gmail.com
+             password: mesa radm tcpd ccfg
+             to: anishshunmugam@gmail.com
+             subject: "Ansible Notification: Task Failed"
+             body: "The following task failed:\n"
+          when: ansible_failed_task.name == "User deletion"
+

@@ -1,0 +1,58 @@
+---
+- name: Example for Block and Rescue task
+  hosts: demo
+  become: true
+  vars:
+    pkg: http
+    db: mariadb-server
+    service: mariadb
+  tasks:
+    - name: Attempt to set up a webserver
+      block:
+        - name: Installing {{ pkg }} package
+          yum:
+            name: "{{ pkg }}"
+            state: latest
+      rescue:
+        - name: Install {{ db }} package in RHEL
+          yum:
+            name: "{{ db }}"
+            state: present
+          when: ansible_os_family == "RedHat"
+        - name : Install {{ db }} package in Debian
+          apt:
+            name: "{{ db }}"
+            state: latest
+          when: ansible_os_family == "Debian"
+        - name: Install the {{ db }} in Suse
+          community.general.zypper:
+            name: "{{ db }}"
+            state: latest
+          when: ansible_os_family == "Suse"
+      always:
+        - name: Start the {{ service }} in RHEL
+          service:
+            name: "{{ service }}"
+            state: started
+          when: ansible_os_family == "Redhat"
+        - name: Start the {{ service }} in Debian
+          service:
+            name: "{{ service }}"
+            state: started
+          when: ansible_os_family == "Debian"
+        - name: Start the {{ service }} in Suse
+          service:
+            name: "{{ service }}"
+            state: started
+          when: ansible_os_family == "Suse"
+        - name: task_failed
+          mail:
+           host: smtp.gmail.com
+           port: 587
+           username: anishknsk@gmail.com
+           password: mesa radm tcpd ccfg
+           to: anishshunmugam@gmail.com
+           subject: " Task Failed_Critical"
+           body: "Installation task failed:\n"
+           when: ansible_failed_tasks.name == "{{ pkg }}"
+          delegate_to: localhost

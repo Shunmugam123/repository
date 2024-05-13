@@ -1,0 +1,26 @@
+---
+- name: Execute Playbook and Send Report via Email
+  hosts: localhost 
+  gather_facts: no
+  tasks:
+    - name: Execute the playbook
+      shell: ansible-playbook ospackage.yml
+      register: playbook_result
+      ignore_errors: yes
+
+    - name: Generate report
+      copy:
+        content: "{{ playbook_result.stdout_lines | join('\n') }}"
+        dest: /tmp/playbook_report.txt
+
+    - name: Send email with report
+      mail:
+        host: smtp.gmail.com
+        port: 587
+        username: anishknsk@gmail.com
+        password: mesa radm tcpd ccfg
+        to: anishshunmugam@gmail.com
+        subject: "Ansible Playbook Execution Report"
+        body: "Please find attached the report of Ansible playbook execution."
+        attach: /tmp/playbook_report.txt
+
